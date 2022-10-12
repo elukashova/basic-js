@@ -13,10 +13,36 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform(/* arr */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
-}
+
+ function transform(arr) {
+  if (!Array.isArray(arr)) throw new Error("'arr' parameter must be an instance of the Array!");
+  let newArr = [...arr];
+
+  let doubleNext = '--double-next';
+  let doublePrev = '--double-prev';
+  let discardNext = '--discard-next';
+  let discardPrev = '--discard-prev';
+
+  for (let i = 0; i < arr.length; i++) {
+      
+    if (newArr[i] === doubleNext) {
+    typeof(newArr[i+1]) === 'number' ? newArr[i] = newArr[i+1] : newArr[i] = newArr[i]
+  } else if (newArr[i] === doublePrev) {
+    typeof(newArr[i-1]) === 'number' ? newArr[i] = newArr[i-1] : newArr[i] = newArr[i];
+  } else if (newArr[i] === discardNext) {
+    if (typeof(newArr[i+1]) === 'number') {
+    newArr = newArr.filter (elem => elem !== newArr[i+1]);
+    newArr = newArr.filter (elem => elem !== newArr[i]);
+    }
+  } else if (newArr[i] === discardPrev) {
+    if (typeof(newArr[i-1]) === 'number') {
+    newArr = newArr.filter (elem => elem !== newArr[i]);
+    newArr = newArr.filter (elem => elem !== newArr[i-1]);
+    }
+  }
+  }
+    return newArr;
+  }
 
 module.exports = {
   transform
