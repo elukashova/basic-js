@@ -16,33 +16,42 @@ const { NotImplementedError } = require('../extensions/index.js');
 
  function transform(arr) {
   if (!Array.isArray(arr)) throw new Error("'arr' parameter must be an instance of the Array!");
-  let newArr = [...arr];
-
+  let newArr = [];
+  
   let doubleNext = '--double-next';
   let doublePrev = '--double-prev';
   let discardNext = '--discard-next';
   let discardPrev = '--discard-prev';
-
+  
   for (let i = 0; i < arr.length; i++) {
-      
-    if (newArr[i] === doubleNext) {
-    typeof(newArr[i+1]) === 'number' ? newArr[i] = newArr[i+1] : newArr[i] = newArr[i]
-  } else if (newArr[i] === doublePrev) {
-    typeof(newArr[i-1]) === 'number' ? newArr[i] = newArr[i-1] : newArr[i] = newArr[i];
-  } else if (newArr[i] === discardNext) {
-    if (typeof(newArr[i+1]) === 'number') {
-    newArr = newArr.filter (elem => elem !== newArr[i+1]);
-    newArr = newArr.filter (elem => elem !== newArr[i]);
-    }
-  } else if (newArr[i] === discardPrev) {
-    if (typeof(newArr[i-1]) === 'number') {
-    newArr = newArr.filter (elem => elem !== newArr[i]);
-    newArr = newArr.filter (elem => elem !== newArr[i-1]);
-    }
+      if (arr[i] === doubleNext) {
+          if (i < arr.length - 1) {
+              newArr.push(arr[i+1]);
+          }
+      } else if (arr[i] === doublePrev) {
+          if (i > 1 && arr[i - 2] === discardNext) {
+              continue;
+          } else if (i > 0) {
+              newArr.push(arr[i-1]);
+          }
+      } else if (arr[i] === discardNext) {
+          if (i < arr.length - 1) {
+              i++;
+          } else {
+              newArr = newArr.filter (elem => elem !== newArr[i]);
+          }
+      } else if (arr[i] === discardPrev) {
+          if (i > 1 && arr[i - 2] === discardNext) {
+              continue;
+          } else if (i > 0) {
+              newArr.pop();
+          }
+      } else {
+          newArr.push(arr[i]);
+      }
   }
-  }
-    return newArr;
-  }
+  return newArr;
+}
 
 module.exports = {
   transform
